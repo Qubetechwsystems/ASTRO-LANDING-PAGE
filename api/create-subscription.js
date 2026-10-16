@@ -1,4 +1,4 @@
-// api/create-subscription.js - Dynamic Razorpay AutoPay Generator (₹1 Trial + ₹599 Bi-monthly)
+// api/create-subscription.js - Dynamic Razorpay AutoPay Generator (Verified Astrology Account)
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -11,8 +11,9 @@ export default async function handler(req, res) {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
     const { name, phone, service, problem, place, dob, time } = body;
 
-    const key_id = 'rzp_live_ToVknbUG7BuLYL';
-    const key_secret = 'V6LdP62mu5HhJdShEWkvbt40';
+    // आपका नया आधिकारिक वेरिफाइड Razorpay क्रेडेंशियल
+    const key_id = 'rzp_live_Tof2RpwJEWMNx9';
+    const key_secret = 'BUG1LRSI1uHjxtz8k51eovT8';
     const auth = Buffer.from(`${key_id}:${key_secret}`).toString('base64');
 
     // 1. स्वच्छ फोन नंबर व ईमेल
@@ -20,7 +21,7 @@ export default async function handler(req, res) {
     const validContact = cleanPhone ? `91${cleanPhone}` : '919116497140';
     const validEmail = `astro_${cleanPhone || Date.now()}@divyaastro.com`;
 
-    // 2. ग्राहक (Customer) बनाएं या मौजूद ग्राहक का ID खोजें
+    // 2. ग्राहक (Customer) बनाएं या मौजूद ग्राहक खोजें
     let customer_id = null;
     try {
       const custRes = await fetch('https://api.razorpay.com/v1/customers', {
@@ -56,7 +57,7 @@ export default async function handler(req, res) {
 
     // 4. ₹1 ट्रायल टोकन + ₹599 द्विमासिक ऑटो-पे सब्सक्रिप्शन पेलोड
     const payload = {
-      plan_id: 'plan_ToVm7z1bnK1M1j', // ₹599 / 2 माह प्लान
+      plan_id: 'plan_Tof3tgwhEMzWEm', // नया एक्टिव ₹599 / 2 माह प्लान
       total_count: 60,
       quantity: 1,
       start_at: start_at,
@@ -65,7 +66,7 @@ export default async function handler(req, res) {
         {
           item: {
             name: '₹1 प्रारंभिक ट्रायल टोकन',
-            amount: 100, // सिर्फ ₹1 (100 पैसे) आज कटेगा
+            amount: 100, // सिर्फ ₹1 आज कटेगा
             currency: 'INR'
           }
         }
@@ -103,6 +104,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       subscription_id: data.id,
+      short_url: data.short_url,
       customer_id: customer_id
     });
 

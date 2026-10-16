@@ -27,8 +27,8 @@ export default async function handler(req, res) {
 
   if (payment_id) {
     try {
-      const key_id = 'rzp_live_ToVknbUG7BuLYL';
-      const key_secret = 'V6LdP62mu5HhJdShEWkvbt40';
+      const key_id = 'rzp_live_Tof2RpwJEWMNx9';
+      const key_secret = 'BUG1LRSI1uHjxtz8k51eovT8';
       const auth = Buffer.from(`${key_id}:${key_secret}`).toString('base64');
       const rzpRes = await fetch(`https://api.razorpay.com/v1/payments/${payment_id}`, {
         headers: { 'Authorization': `Basic ${auth}` }
