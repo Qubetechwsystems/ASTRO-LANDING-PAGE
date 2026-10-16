@@ -150,15 +150,13 @@ async function handleFormSubmit(event) {
     if (data.success && data.subscription_id) {
       console.log("✅ AutoPay Subscription Generated:", data.subscription_id);
 
-      // Razorpay चेकआउट विकल्प (callback_url व redirect: true के साथ)
+      // Razorpay चेकआउट विकल्प (In-page Checkout Popup)
       const options = {
         key: APP_CONFIG.RAZORPAY_KEY_ID,
         subscription_id: data.subscription_id,
         name: APP_CONFIG.BUSINESS_NAME,
         description: "₹1 ट्रायल: हस्तरेखा एवं कुंडली विश्लेषण",
         image: "https://cdn-icons-png.flaticon.com/512/3663/3663335.png",
-        callback_url: "https://astro-landing-page-gold.vercel.app/api/payment-callback",
-        redirect: true,
         prefill: {
           name: name,
           contact: phone
@@ -194,18 +192,20 @@ async function handleFormSubmit(event) {
         if (typeof window.Razorpay === 'function') {
           const rzp = new window.Razorpay(options);
           rzp.on('payment.failed', function (pErr) {
-            console.warn("In-page checkout notice:", pErr);
-            if (data.short_url) {
-              window.location.href = data.short_url;
+            console.warn("Payment notice:", pErr);
+            if (payBtn) {
+              payBtn.disabled = false;
+              payBtn.innerHTML = '<i class="fa-solid fa-shield-check"></i> <span>पुनः प्रयास करें — ₹1</span>';
             }
           });
           rzp.open();
-        } else {
-          // Fallback to short_url
+        } else if (data.short_url) {
           window.location.href = data.short_url;
         }
       } catch (e) {
-        window.location.href = data.short_url;
+        if (data.short_url) {
+          window.location.href = data.short_url;
+        }
       }
 
     } else {
@@ -213,7 +213,7 @@ async function handleFormSubmit(event) {
     }
   } catch (err) {
     console.error("AutoPay Error:", err);
-    alert("त्रुटि: " + err.message + "\nकृपया पुनः प्रयास करें।");
+    alert("सूचना: " + err.message + "\nकृपया पुनः प्रयास करें।");
     if (payBtn) {
       payBtn.innerHTML = '<i class="fa-solid fa-shield-check"></i> <span>सुरक्षित भुगतान करें — ₹1</span>';
       payBtn.disabled = false;
