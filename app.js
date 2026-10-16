@@ -9,14 +9,14 @@ const APP_CONFIG = {
   RAZORPAY_KEY_ID: "rzp_live_ToVknbUG7BuLYL",
 
   // जब आप तैयार हों, यहाँ अपनी Meta Pixel ID डालें
-  META_PIXEL_ID: "YOUR_META_PIXEL_ID", 
+  META_PIXEL_ID: "2242280556724298", 
 
   // मूल्य विवरण
   TRIAL_AMOUNT: 1.00,        // ₹1 ट्रायल
   RECURRING_AMOUNT: 599.00,  // ₹599 प्रति दो माह
   CURRENCY: "INR",
   BUSINESS_NAME: "वैदिक हस्तरेखा एवं ज्योतिष केंद्र",
-  WHATSAPP_SUPPORT_NUMBER: "919876543210"
+  WHATSAPP_SUPPORT_NUMBER: "919116497140"
 };
 
 // ================= META PIXEL HELPER =================
