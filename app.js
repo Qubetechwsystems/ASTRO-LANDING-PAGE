@@ -5,10 +5,15 @@
 
 // ================= GLOBAL CONFIGURATION =================
 const APP_CONFIG = {
+  // आपकी नई सक्रिय Razorpay Key ID
   RAZORPAY_KEY_ID: "rzp_live_ToVknbUG7BuLYL",
+
+  // जब आप तैयार हों, यहाँ अपनी Meta Pixel ID डालें
   META_PIXEL_ID: "YOUR_META_PIXEL_ID", 
-  TRIAL_AMOUNT: 1.00,
-  RECURRING_AMOUNT: 599.00,
+
+  // मूल्य विवरण
+  TRIAL_AMOUNT: 1.00,        // ₹1 ट्रायल
+  RECURRING_AMOUNT: 599.00,  // ₹599 प्रति दो माह
   CURRENCY: "INR",
   BUSINESS_NAME: "वैदिक हस्तरेखा एवं ज्योतिष केंद्र",
   WHATSAPP_SUPPORT_NUMBER: "919876543210"
@@ -23,7 +28,11 @@ function initMetaPixel() {
         window.fbq('track', 'PageView');
         console.log("✅ [Meta Pixel] PageView Event fired successfully.");
       }
-    } catch (err) {}
+    } catch (err) {
+      console.warn("⚠️ [Meta Pixel] Init Error:", err);
+    }
+  } else {
+    console.info("ℹ️ [Meta Pixel] Ready for Live Pixel ID.");
   }
 }
 
@@ -32,7 +41,9 @@ function trackMetaEvent(eventName, params = {}) {
   if (typeof window.fbq === 'function' && APP_CONFIG.META_PIXEL_ID !== "YOUR_META_PIXEL_ID") {
     try {
       window.fbq('track', eventName, params);
-    } catch (e) {}
+    } catch (e) {
+      console.warn(`Error tracking ${eventName}:`, e);
+    }
   }
 }
 
@@ -41,9 +52,12 @@ function startCountdown() {
   const timerElement = document.getElementById("countdownTimer");
   if (!timerElement) return;
 
-  let totalSeconds = 14 * 60 + 59;
+  let totalSeconds = 14 * 60 + 59; // 14:59
+
   setInterval(() => {
-    if (totalSeconds <= 0) totalSeconds = 15 * 60;
+    if (totalSeconds <= 0) {
+      totalSeconds = 15 * 60;
+    }
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
     timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
@@ -56,6 +70,7 @@ function toggleFaq(index) {
   const answer = document.getElementById(`faq-ans-${index}`);
   const icon = document.getElementById(`faq-icon-${index}`);
   if (!answer) return;
+
   const isHidden = answer.classList.contains("hidden");
   
   for (let i = 1; i <= 4; i++) {
@@ -77,6 +92,8 @@ function openBookingModal() {
   if (modal) {
     modal.classList.remove("hidden");
     document.body.style.overflow = "hidden";
+    
+    // Meta Pixel: InitiateCheckout
     trackMetaEvent('InitiateCheckout', {
       value: APP_CONFIG.TRIAL_AMOUNT,
       currency: APP_CONFIG.CURRENCY,
@@ -120,6 +137,7 @@ async function handleFormSubmit(event) {
     payBtn.disabled = true;
   }
 
+  // Meta Pixel Event
   trackMetaEvent('InitiateCheckout', {
     value: APP_CONFIG.TRIAL_AMOUNT,
     currency: APP_CONFIG.CURRENCY,
@@ -128,20 +146,36 @@ async function handleFormSubmit(event) {
     customer_name: name
   });
 
+  // ग्राहक डेटा सुरक्षित करें
   try {
+    localStorage.setItem("astro_lead", JSON.stringify({
+      name, phone, service, dob, time, place, problem,
+      timestamp: new Date().toISOString()
+    }));
+  } catch (e) {}
+
+  try {
+    // बैकएंड API से इस ग्राहक के लिए बिल्कुल फ्रेश और यूनिक ऑटो-पे लिंक बनाएं
     const response = await fetch('/api/create-subscription', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, phone, service, dob, time, place, problem })
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name, phone, service, dob, time, place, problem
+      })
     });
 
     const data = await response.json();
 
     if (data.success && data.short_url) {
+      console.log("✅ Fresh Unique AutoPay Created:", data.subscription_id);
+      // ग्राहक को तुरंत उसके व्यक्तिगत ऑटो-पे पेज पर रीडायरेक्ट करें (0% डोमेन एरर)
       window.location.href = data.short_url;
     } else {
-      throw new Error(data.error || "ऑटो-पे लिंक नहीं बन सका।");
+      throw new Error(data.error || "ऑटो-पे बनाने में समस्या आई।");
     }
+
   } catch (err) {
     console.error("AutoPay Error:", err);
     alert("त्रुटि: " + err.message + "\nकृपया पुनः प्रयास करें।");
@@ -152,7 +186,9 @@ async function handleFormSubmit(event) {
   }
 }
 
+// ================= DOM INITIALIZATION =================
 document.addEventListener("DOMContentLoaded", () => {
   initMetaPixel();
   startCountdown();
+  console.log("🌟 [Vedic Astrology Page] Dynamic Unlimited AutoPay System Ready.");
 });
