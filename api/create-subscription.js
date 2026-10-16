@@ -1,4 +1,4 @@
-// api/create-subscription.js
+// api/create-subscription.js - Dynamic Razorpay AutoPay Generator
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -14,29 +14,93 @@ export default async function handler(req, res) {
     const key_id = 'rzp_live_ToVknbUG7BuLYL';
     const key_secret = 'V6LdP62mu5HhJdShEWkvbt40';
     const auth = Buffer.from(`${key_id}:${key_secret}`).toString('base64');
+
+    // 1. स्वच्छ फोन नंबर व ईमेल
+    const cleanPhone = (phone || '').replace(/[^0-9]/g, '').slice(-10);
+    const validContact = cleanPhone ? `91${cleanPhone}` : '919116497140';
+    const validEmail = `astro_${cleanPhone || Date.now()}@divyaastro.com`;
+
+    // 2. ग्राहक (Customer) बनाएं या लिंक करें
+    let customer_id = null;
+    try {
+      const custRes = await fetch('https://api.razorpay.com/v1/customers', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: name || 'Astro Seeker',
+          contact: validContact,
+          email: validEmail
+        })
+      });
+      const custData = await custRes.json();
+      if (custData && custData.id) {
+        customer_id = custData.id;
+      }
+    } catch (e) {
+      console.warn('Customer create warning:', e);
+    }
+
+    // 3. अगले दिन का ऑटो-डेबिट समय (24 घंटे बाद)
     const start_at = Math.floor(Date.now() / 1000) + 86400;
 
+    // 4. ₹1 ट्रायल + ₹599 द्विमासिक ऑटो-पे सब्सक्रिप्शन पेलोड
     const payload = {
-      plan_id: 'plan_ToVm7z1bnK1M1j',
+      plan_id: 'plan_ToVm7z1bnK1M1j', // ₹599 / 2 माह प्लान
       total_count: 60,
       quantity: 1,
       start_at: start_at,
       customer_notify: 1,
-      addons: [{ item: { name: '₹1 प्रारंभिक ट्रायल टोकन', amount: 100, currency: 'INR' } }],
-      notes: { customer_name: name || 'Customer', customer_phone: phone || '', service_type: service || 'both' }
+      addons: [
+        {
+          item: {
+            name: '₹1 प्रारंभिक ट्रायल टोकन',
+            amount: 100, // ₹1 = 100 पैसे
+            currency: 'INR'
+          }
+        }
+      ],
+      notes: {
+        customer_name: name || '',
+        customer_phone: cleanPhone || '',
+        service_type: service || 'both',
+        dob: dob || '',
+        place: place || ''
+      }
     };
 
+    if (customer_id) {
+      payload.customer_id = customer_id;
+    }
+
+    // 5. Razorpay Subscriptions API कॉल
     const response = await fetch('https://api.razorpay.com/v1/subscriptions', {
       method: 'POST',
-      headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/json' },
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(payload)
     });
 
     const data = await response.json();
-    if (!response.ok) return res.status(response.status).json({ error: data.error?.description || 'Error' });
 
-    return res.status(200).json({ success: true, subscription_id: data.id, short_url: data.short_url });
+    if (!response.ok) {
+      console.error('Razorpay Subscription Error:', data);
+      return res.status(response.status).json({ error: data.error?.description || 'AutoPay generation failed' });
+    }
+
+    return res.status(200).json({
+      success: true,
+      subscription_id: data.id,
+      short_url: data.short_url,
+      customer_id: customer_id
+    });
+
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    console.error('Server error:', err);
+    return res.status(500).json({ error: err.message || 'Internal Server Error' });
   }
 }
