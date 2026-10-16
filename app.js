@@ -6,7 +6,7 @@
 // ================= GLOBAL CONFIGURATION =================
 const APP_CONFIG = {
   // आपकी सक्रिय Razorpay Key ID
-  RAZORPAY_KEY_ID: "rzp_live_ToVknbUG7BuLYL",
+  RAZORPAY_KEY_ID: "rzp_live_Tof2RpwJEWMNx9",
 
   // आपकी Meta Pixel ID
   META_PIXEL_ID: "2242280556724298", 
