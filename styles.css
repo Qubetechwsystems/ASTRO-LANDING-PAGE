@@ -1,0 +1,61 @@
+/* ================= TYPOGRAPHY & DEVANAGARI FONT FIXES ================= */
+/* Windows and Chrome font smoothing for crisp Devanagari matras (पाई, मात्राएं) */
+body, button, input, select, textarea {
+  font-family: 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Ensure proper line height so upper and lower Hindi matras (ई की मात्रा, उ की मात्रा, आदि) are never clipped */
+p, h1, h2, h3, h4, h5, h6, span, label, li {
+  line-height: 1.65;
+}
+
+/* Headings font styling */
+.font-display {
+  font-family: 'Poppins', 'Noto Sans Devanagari', sans-serif;
+}
+
+/* ================= GLOW & HIGHLIGHT EFFECTS ================= */
+@keyframes pulseGoldGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(245, 158, 11, 0.7), 0 0 8px rgba(251, 191, 36, 0.5);
+  }
+}
+
+.gold-glow {
+  animation: pulseGoldGlow 3s infinite ease-in-out;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #080511;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a1b38;
+  border-radius: 4px;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6b21a8;
+}
+
+/* Input Focus Glow */
+input:focus, select:focus {
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
+}
+
+/* Mobile Sticky Bar clearance */
+@media (max-width: 640px) {
+  body {
+    padding-bottom: 78px;
+  }
+}
