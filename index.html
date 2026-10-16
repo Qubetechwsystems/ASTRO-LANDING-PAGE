@@ -550,16 +550,16 @@
   </div>
 
   <!-- ================= BOOKING MODAL ================= -->
-  <div id="bookingModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-gradient-to-b from-[#180f2d] to-[#100720] border-2 border-amber-500/50 rounded-2xl max-w-lg w-full p-5 sm:p-6 text-left relative shadow-[0_0_40px_rgba(245,158,11,0.35)] my-6">
+  <div id="bookingModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden flex items-start justify-center p-2.5 sm:p-4 overflow-y-auto">
+    <div class="bg-gradient-to-b from-[#180f2d] to-[#100720] border-2 border-amber-500/50 rounded-2xl max-w-lg w-full p-4 sm:p-6 text-left relative shadow-[0_0_40px_rgba(245,158,11,0.35)] mt-2 sm:mt-6 mb-8">
       
       <!-- Close button -->
-      <button onclick="closeBookingModal()" class="absolute top-3.5 right-3.5 text-amber-300 hover:text-white text-2xl w-9 h-9 flex items-center justify-center rounded-full bg-amber-500/10 hover:bg-amber-500/25 border border-amber-500/30 transition z-10">
+      <button onclick="closeBookingModal()" class="absolute top-3 right-3 text-amber-300 hover:text-white text-2xl w-9 h-9 flex items-center justify-center rounded-full bg-amber-500/10 hover:bg-amber-500/25 border border-amber-500/30 transition z-10">
         &times;
       </button>
 
       <!-- Modal Header -->
-      <div class="flex items-start gap-3 mb-5 pr-12">
+      <div class="flex items-start gap-3 mb-4 pr-12">
         <span class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg font-bold shrink-0 border border-amber-500/30 mt-0.5">
           <i class="fa-solid fa-hand-sparkles"></i>
         </span>
@@ -573,34 +573,40 @@
         </div>
       </div>
 
-      <form id="astrologyForm" onsubmit="handleFormSubmit(event)" class="space-y-4 text-xs sm:text-sm">
+      <form id="astrologyForm" onsubmit="handleFormSubmit(event)" class="space-y-3.5 text-xs sm:text-sm">
         
         <!-- Name -->
         <div>
-          <label class="block text-amber-200 text-xs sm:text-sm font-semibold mb-1.5">
-            आपका पूरा नाम <span class="text-rose-400">*</span>
+          <label class="block text-amber-300 text-sm font-bold mb-1.5 flex items-center gap-1.5">
+            <i class="fa-solid fa-user text-amber-400"></i>
+            <span>यहाँ अपना पूरा नाम लिखें</span>
+            <span class="text-rose-400 font-extrabold">*</span>
           </label>
-          <input type="text" id="custName" required placeholder="उदा. राहुल शर्मा" class="w-full bg-[#0a0517] border border-amber-500/40 rounded-xl px-3.5 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-sm font-hindi">
+          <input type="text" id="custName" required placeholder="यहाँ अपना नाम लिखें (उदा. राहुल शर्मा)" class="w-full bg-[#0a0517] border-2 border-amber-500/50 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-amber-400 text-sm font-hindi">
         </div>
 
         <!-- WhatsApp Number -->
         <div>
-          <label class="block text-amber-200 text-xs sm:text-sm font-semibold mb-1.5">
-            व्हाट्सएप मोबाइल नंबर <span class="text-rose-400">*</span> 
-            <span class="text-[11px] font-normal text-amber-300/80">(रिपोर्ट इसी पर आएगी)</span>
+          <label class="block text-amber-300 text-sm font-bold mb-1.5 flex items-center gap-1.5 flex-wrap">
+            <i class="fa-brands fa-whatsapp text-emerald-400 text-base"></i>
+            <span>यहाँ अपना 10 अंकों का व्हाट्सएप नंबर लिखें</span>
+            <span class="text-rose-400 font-extrabold">*</span>
+            <span class="text-xs font-normal text-amber-200/90 ml-1">(रिपोर्ट इसी नंबर पर भेजी जाएगी)</span>
           </label>
           <div class="flex">
-            <span class="inline-flex items-center px-3.5 rounded-l-xl border border-r-0 border-amber-500/40 bg-amber-500/15 text-amber-300 text-sm font-bold">+91</span>
-            <input type="tel" id="custPhone" required pattern="[0-9]{10}" placeholder="10 अंकों का मोबाइल नंबर" class="w-full bg-[#0a0517] border border-amber-500/40 rounded-r-xl px-3.5 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-sm font-hindi">
+            <span class="inline-flex items-center px-4 rounded-l-xl border-2 border-r-0 border-amber-500/50 bg-amber-500/20 text-amber-300 text-sm font-bold">+91</span>
+            <input type="tel" id="custPhone" required pattern="[0-9]{10}" placeholder="यहाँ 10 अंकों का व्हाट्सएप नंबर दर्ज करें" class="w-full bg-[#0a0517] border-2 border-amber-500/50 rounded-r-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-amber-400 text-sm font-hindi">
           </div>
         </div>
 
         <!-- Service Preference -->
         <div>
-          <label class="block text-amber-200 text-xs sm:text-sm font-semibold mb-1.5">
-            आप क्या विश्लेषण चाहते हैं? <span class="text-rose-400">*</span>
+          <label class="block text-amber-300 text-sm font-bold mb-1.5 flex items-center gap-1.5">
+            <i class="fa-solid fa-hand text-amber-400"></i>
+            <span>आप क्या विश्लेषण चाहते हैं?</span>
+            <span class="text-rose-400 font-extrabold">*</span>
           </label>
-          <select id="custService" required class="w-full bg-[#0a0517] border border-amber-500/40 rounded-xl px-3.5 py-3 text-white focus:outline-none focus:border-amber-400 text-sm font-hindi">
+          <select id="custService" required class="w-full bg-[#0a0517] border-2 border-amber-500/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-400 text-sm font-hindi">
             <option value="both">हस्तरेखा + जन्मकुंडली दोनों विश्लेषण (सर्वाधिक लोकप्रिय)</option>
             <option value="palm_only">केवल हस्तरेखा विश्लेषण (हथेली की फोटो द्वारा)</option>
             <option value="kundali_only">केवल जन्मकुंडली विश्लेषण</option>
@@ -610,33 +616,41 @@
         <!-- Date & Time of Birth -->
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-amber-200 text-xs sm:text-sm font-semibold mb-1.5">
-              जन्म तिथि <span class="text-rose-400">*</span>
+            <label class="block text-amber-300 text-sm font-bold mb-1.5 flex items-center gap-1.5">
+              <i class="fa-solid fa-calendar-days text-amber-400"></i>
+              <span>जन्म तिथि</span>
+              <span class="text-rose-400 font-extrabold">*</span>
             </label>
-            <input type="date" id="custDob" required class="w-full bg-[#0a0517] border border-amber-500/40 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-amber-400 text-sm font-hindi">
+            <input type="date" id="custDob" required class="w-full bg-[#0a0517] border-2 border-amber-500/50 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-amber-400 text-sm font-hindi">
           </div>
           <div>
-            <label class="block text-amber-200 text-xs sm:text-sm font-semibold mb-1.5">
-              जन्म समय <span class="text-[11px] font-normal text-amber-300/80">(अनुमानित)</span>
+            <label class="block text-amber-300 text-sm font-bold mb-1.5 flex items-center gap-1.5">
+              <i class="fa-solid fa-clock text-amber-400"></i>
+              <span>जन्म समय</span>
+              <span class="text-xs font-normal text-amber-200/80">(अनुमानित)</span>
             </label>
-            <input type="time" id="custTime" class="w-full bg-[#0a0517] border border-amber-500/40 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-amber-400 text-sm font-hindi">
+            <input type="time" id="custTime" class="w-full bg-[#0a0517] border-2 border-amber-500/50 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-amber-400 text-sm font-hindi">
           </div>
         </div>
 
         <!-- Place of Birth -->
         <div>
-          <label class="block text-amber-200 text-xs sm:text-sm font-semibold mb-1.5">
-            जन्म स्थान (शहर / राज्य) <span class="text-rose-400">*</span>
+          <label class="block text-amber-300 text-sm font-bold mb-1.5 flex items-center gap-1.5">
+            <i class="fa-solid fa-location-dot text-amber-400"></i>
+            <span>जन्म स्थान (शहर / राज्य)</span>
+            <span class="text-rose-400 font-extrabold">*</span>
           </label>
-          <input type="text" id="custPlace" required placeholder="उदा. लखनऊ, उत्तर प्रदेश" class="w-full bg-[#0a0517] border border-amber-500/40 rounded-xl px-3.5 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-amber-400 text-sm font-hindi">
+          <input type="text" id="custPlace" required placeholder="उदा. लखनऊ, उत्तर प्रदेश" class="w-full bg-[#0a0517] border-2 border-amber-500/50 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-amber-400 text-sm font-hindi">
         </div>
 
         <!-- Primary Life Concern -->
         <div>
-          <label class="block text-amber-200 text-xs sm:text-sm font-semibold mb-1.5">
-            आपका मुख्य प्रश्न अथवा समस्या का विषय <span class="text-rose-400">*</span>
+          <label class="block text-amber-300 text-sm font-bold mb-1.5 flex items-center gap-1.5">
+            <i class="fa-solid fa-circle-question text-amber-400"></i>
+            <span>मुख्य प्रश्न अथवा समस्या का विषय</span>
+            <span class="text-rose-400 font-extrabold">*</span>
           </label>
-          <select id="custProblem" required class="w-full bg-[#0a0517] border border-amber-500/40 rounded-xl px-3.5 py-3 text-white focus:outline-none focus:border-amber-400 text-sm font-hindi">
+          <select id="custProblem" required class="w-full bg-[#0a0517] border-2 border-amber-500/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-400 text-sm font-hindi">
             <option value="career_business">करियर, नौकरी में तरक्की व व्यापार में रुकावट</option>
             <option value="marriage_love">विवाह में विलंब, वैवाहिक सामंजस्य व प्रेम संबंध</option>
             <option value="finance_debt">आर्थिक स्थिति, बचत न होना व कर्ज की समस्या</option>
@@ -674,6 +688,6 @@
   </div>
 
   <!-- JavaScript Application File with Cache-Buster -->
-  <script src="app.js?v=6.0"></script>
+  <script src="app.js?v=7.0"></script>
 </body>
 </html>

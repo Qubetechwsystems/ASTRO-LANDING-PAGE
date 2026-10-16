@@ -82,6 +82,8 @@ function openBookingModal() {
   if (modal) {
     modal.classList.remove("hidden");
     document.body.style.overflow = "hidden";
+    // ऑटोमैटिक ऊपर स्क्रॉल करें ताकि हेडर व नाम फील्ड तुरंत दिखे
+    modal.scrollTop = 0;
     trackMetaEvent('InitiateCheckout', {
       value: APP_CONFIG.TRIAL_AMOUNT,
       currency: APP_CONFIG.CURRENCY,
@@ -102,7 +104,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeBookingModal();
 });
 
-// ================= FORM SUBMISSION, AUTOPAY & WHATSAPP REDIRECT =================
+// ================= FORM SUBMISSION, DIRECT RAZORPAY AUTOPAY =================
 async function handleFormSubmit(event) {
   event.preventDefault();
 
@@ -126,7 +128,7 @@ async function handleFormSubmit(event) {
 
   const payBtn = document.getElementById("payBtn");
   if (payBtn) {
-    payBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> सुरक्षित ऑटो-पे तैयार हो रहा है...';
+    payBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> सुरक्षित पेमेंट पेज खुल रहा है...';
     payBtn.disabled = true;
   }
 
@@ -147,67 +149,10 @@ async function handleFormSubmit(event) {
 
     const data = await response.json();
 
-    if (data.success && data.subscription_id) {
-      console.log("✅ AutoPay Subscription Generated:", data.subscription_id);
-
-      // Razorpay चेकआउट विकल्प (In-page Checkout Popup)
-      const options = {
-        key: APP_CONFIG.RAZORPAY_KEY_ID,
-        subscription_id: data.subscription_id,
-        name: APP_CONFIG.BUSINESS_NAME,
-        description: "₹1 ट्रायल: हस्तरेखा एवं कुंडली विश्लेषण",
-        image: "https://cdn-icons-png.flaticon.com/512/3663/3663335.png",
-        prefill: {
-          name: name,
-          contact: phone
-        },
-        theme: {
-          color: "#F59E0B"
-        },
-        handler: function (resp) {
-          console.log("✅ Payment Successful! Firing Purchase & Redirecting to WhatsApp...");
-          const paymentId = resp.razorpay_payment_id || resp.razorpay_subscription_id || ('PAY_' + Date.now());
-          
-          // Meta Pixel: Purchase Event Fire
-          trackMetaEvent('Purchase', {
-            value: APP_CONFIG.TRIAL_AMOUNT,
-            currency: APP_CONFIG.CURRENCY,
-            content_name: '₹1 Palmistry & Kundali Trial'
-          }, { eventID: paymentId });
-
-          // सीधे thank-you.html पर रीडायरेक्ट (जहाँ से 2 सेकंड में WhatsApp ऑटो-खुलता है)
-          window.location.href = `https://astro-landing-page-gold.vercel.app/thank-you.html?razorpay_payment_id=${paymentId}&phone=${encodeURIComponent(phone)}&name=${encodeURIComponent(name)}`;
-        },
-        modal: {
-          ondismiss: function () {
-            if (payBtn) {
-              payBtn.disabled = false;
-              payBtn.innerHTML = '<i class="fa-solid fa-shield-check"></i> <span>सुरक्षित भुगतान करें — ₹1</span>';
-            }
-          }
-        }
-      };
-
-      try {
-        if (typeof window.Razorpay === 'function') {
-          const rzp = new window.Razorpay(options);
-          rzp.on('payment.failed', function (pErr) {
-            console.warn("Payment notice:", pErr);
-            if (payBtn) {
-              payBtn.disabled = false;
-              payBtn.innerHTML = '<i class="fa-solid fa-shield-check"></i> <span>पुनः प्रयास करें — ₹1</span>';
-            }
-          });
-          rzp.open();
-        } else if (data.short_url) {
-          window.location.href = data.short_url;
-        }
-      } catch (e) {
-        if (data.short_url) {
-          window.location.href = data.short_url;
-        }
-      }
-
+    if (data.success && data.short_url) {
+      console.log("✅ AutoPay Ready! Redirecting directly to secure Razorpay page:", data.short_url);
+      // सीधे Razorpay के सुरक्षित पेमेंट पेज पर भेजें (जिससे कोई 'website does not match' एरर नहीं आएगी)
+      window.location.href = data.short_url;
     } else {
       throw new Error(data.error || "ऑटो-पे लिंक नहीं बन सका।");
     }
