@@ -5,7 +5,7 @@
 
 // ================= GLOBAL CONFIGURATION =================
 const APP_CONFIG = {
-  // आपकी नई सक्रिय Razorpay Key ID
+  // आपकी सक्रिय Razorpay Key ID
   RAZORPAY_KEY_ID: "rzp_live_ToVknbUG7BuLYL",
 
   // आपकी Meta Pixel ID
@@ -32,11 +32,11 @@ function initMetaPixel() {
   }
 }
 
-function trackMetaEvent(eventName, params = {}) {
+function trackMetaEvent(eventName, params = {}, options = {}) {
   console.log(`📡 [Meta Pixel Event]: ${eventName}`, params);
   if (typeof window.fbq === 'function' && APP_CONFIG.META_PIXEL_ID !== "YOUR_META_PIXEL_ID") {
     try {
-      window.fbq('track', eventName, params);
+      window.fbq('track', eventName, params, options);
     } catch (e) {}
   }
 }
@@ -119,6 +119,11 @@ async function handleFormSubmit(event) {
     return;
   }
 
+  // स्थानीय स्टोरेज में विवरण सुरक्षित करें ताकि WhatsApp व थैंक-यू पेज पर ऑटो-फिल हो सके
+  try {
+    localStorage.setItem('astro_lead', JSON.stringify({ name, phone, service, dob, time, place, problem }));
+  } catch (e) {}
+
   const payBtn = document.getElementById("payBtn");
   if (payBtn) {
     payBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> सुरक्षित ऑटो-पे तैयार हो रहा है...';
@@ -145,19 +150,15 @@ async function handleFormSubmit(event) {
     if (data.success && data.subscription_id) {
       console.log("✅ AutoPay Subscription Generated:", data.subscription_id);
 
-      // व्हाट्सएप रीडायरेक्शन मैसेज तैयार करें
-      const getWhatsAppUrl = (paymentId) => {
-        const text = `जय श्री राम, मैंने ₹1 ट्रायल ले लिया है।\n\n📌 *विवरण:*\n• नाम: ${name}\n• फ़ोन: ${phone}\n• समस्या: ${problem}\n• पेमेंट ID: ${paymentId || ''}\n\nयह मेरी दोनों हथेलियों की साफ फोटो है:`;
-        return `https://wa.me/${APP_CONFIG.WHATSAPP_SUPPORT_NUMBER}?text=${encodeURIComponent(text)}`;
-      };
-
-      // 1. इन-पेज रेज़रपे ऑटो-पे चेकआउट खोलें (ताकि पेमेंट होते ही सीधे WhatsApp खुले)
+      // Razorpay चेकआउट विकल्प (callback_url व redirect: true के साथ)
       const options = {
         key: APP_CONFIG.RAZORPAY_KEY_ID,
         subscription_id: data.subscription_id,
         name: APP_CONFIG.BUSINESS_NAME,
         description: "₹1 ट्रायल: हस्तरेखा एवं कुंडली विश्लेषण",
         image: "https://cdn-icons-png.flaticon.com/512/3663/3663335.png",
+        callback_url: "https://astro-landing-page-gold.vercel.app/api/payment-callback",
+        redirect: true,
         prefill: {
           name: name,
           contact: phone
@@ -167,17 +168,17 @@ async function handleFormSubmit(event) {
         },
         handler: function (resp) {
           console.log("✅ Payment Successful! Firing Purchase & Redirecting to WhatsApp...");
+          const paymentId = resp.razorpay_payment_id || resp.razorpay_subscription_id || ('PAY_' + Date.now());
           
           // Meta Pixel: Purchase Event Fire
           trackMetaEvent('Purchase', {
             value: APP_CONFIG.TRIAL_AMOUNT,
             currency: APP_CONFIG.CURRENCY,
-            content_name: '₹1 Palmistry & Kundali Trial',
-            transaction_id: resp.razorpay_payment_id || resp.razorpay_subscription_id
-          });
+            content_name: '₹1 Palmistry & Kundali Trial'
+          }, { eventID: paymentId });
 
-          // 🚀 सीधे WhatsApp पर ऑटोमैटिक रीडायरेक्ट!
-          window.location.href = getWhatsAppUrl(resp.razorpay_payment_id);
+          // सीधे thank-you.html पर रीडायरेक्ट (जहाँ से 2 सेकंड में WhatsApp ऑटो-खुलता है)
+          window.location.href = `https://astro-landing-page-gold.vercel.app/thank-you.html?razorpay_payment_id=${paymentId}&phone=${encodeURIComponent(phone)}&name=${encodeURIComponent(name)}`;
         },
         modal: {
           ondismiss: function () {
@@ -194,7 +195,6 @@ async function handleFormSubmit(event) {
           const rzp = new window.Razorpay(options);
           rzp.on('payment.failed', function (pErr) {
             console.warn("In-page checkout notice:", pErr);
-            // यदि इन-पेज पर ब्लॉक हो, तो सीधे ऑटो-पे लिंक पर भेजें
             if (data.short_url) {
               window.location.href = data.short_url;
             }
