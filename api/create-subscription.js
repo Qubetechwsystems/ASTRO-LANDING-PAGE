@@ -1,4 +1,4 @@
-// api/create-subscription.js - Dynamic Razorpay AutoPay Generator
+// api/create-subscription.js - Dynamic Razorpay AutoPay & Invoice Generator
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -20,7 +20,7 @@ export default async function handler(req, res) {
     const validContact = cleanPhone ? `91${cleanPhone}` : '919116497140';
     const validEmail = `astro_${cleanPhone || Date.now()}@divyaastro.com`;
 
-    // 2. ग्राहक (Customer) बनाएं या लिंक करें
+    // 2. ग्राहक (Customer) बनाएं या मौजूद ग्राहक का ID खोजें
     let customer_id = null;
     try {
       const custRes = await fetch('https://api.razorpay.com/v1/customers', {
@@ -38,20 +38,25 @@ export default async function handler(req, res) {
       const custData = await custRes.json();
       if (custData && custData.id) {
         customer_id = custData.id;
+      } else {
+        // यदि ग्राहक पहले से मौजूद हो, तो उसे खोजें
+        const searchRes = await fetch(`https://api.razorpay.com/v1/customers?contact=${validContact}`, {
+          headers: { 'Authorization': `Basic ${auth}` }
+        });
+        const searchData = await searchRes.json();
+        if (searchData.items && searchData.items.length > 0) {
+          customer_id = searchData.items[0].id;
+        }
       }
     } catch (e) {
-      console.warn('Customer create warning:', e);
+      console.warn('Customer lookup warning:', e);
     }
 
-    // 3. अगले दिन का ऑटो-डेबिट समय (24 घंटे बाद)
-    const start_at = Math.floor(Date.now() / 1000) + 86400;
-
-    // 4. ₹1 ट्रायल + ₹599 द्विमासिक ऑटो-पे सब्सक्रिप्शन पेलोड
+    // 3. ₹1 ट्रायल + ₹599 द्विमासिक ऑटो-पे सब्सक्रिप्शन पेलोड
     const payload = {
       plan_id: 'plan_ToVm7z1bnK1M1j', // ₹599 / 2 माह प्लान
       total_count: 60,
       quantity: 1,
-      start_at: start_at,
       customer_notify: 1,
       addons: [
         {
@@ -75,7 +80,7 @@ export default async function handler(req, res) {
       payload.customer_id = customer_id;
     }
 
-    // 5. Razorpay Subscriptions API कॉल
+    // 4. Razorpay Subscriptions API कॉल
     const response = await fetch('https://api.razorpay.com/v1/subscriptions', {
       method: 'POST',
       headers: {
@@ -92,10 +97,24 @@ export default async function handler(req, res) {
       return res.status(response.status).json({ error: data.error?.description || 'AutoPay generation failed' });
     }
 
+    // 5. ₹1 ट्रायल इनवॉइस का सक्रिय वर्किंग लिंक प्राप्त करें
+    let activeInvoiceUrl = null;
+    try {
+      const invRes = await fetch(`https://api.razorpay.com/v1/invoices?subscription_id=${data.id}`, {
+        headers: { 'Authorization': `Basic ${auth}` }
+      });
+      const invData = await invRes.json();
+      if (invData.items && invData.items.length > 0) {
+        activeInvoiceUrl = invData.items[0].short_url;
+      }
+    } catch (invErr) {
+      console.warn('Invoice fetch notice:', invErr);
+    }
+
     return res.status(200).json({
       success: true,
       subscription_id: data.id,
-      short_url: data.short_url,
+      short_url: activeInvoiceUrl || data.short_url,
       customer_id: customer_id
     });
 
