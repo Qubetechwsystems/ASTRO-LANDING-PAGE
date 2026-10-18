@@ -108,15 +108,21 @@ async function handleFormSubmit(event) {
   event.preventDefault();
 
   const name = document.getElementById("custName")?.value.trim() || "";
-  const phone = document.getElementById("custPhone")?.value.trim() || "";
-  const service = document.getElementById("custService")?.value || "both";
-  const dob = document.getElementById("custDob")?.value || "";
-  const time = document.getElementById("custTime")?.value || "";
-  const place = document.getElementById("custPlace")?.value.trim() || "";
-  const problem = document.getElementById("custProblem")?.value || "";
+  const rawPhone = document.getElementById("custPhone")?.value.trim() || "";
+  const problem = document.getElementById("custProblem")?.value || "general_guidance";
+  const service = "both";
+  const dob = "";
+  const time = "";
+  const place = "";
 
-  if (!name || !phone || !dob || !place) {
-    alert("कृपया सभी आवश्यक फ़ील्ड्स सही से भरें।");
+  if (!name) {
+    alert("कृपया अपना पूरा नाम दर्ज करें।");
+    return;
+  }
+
+  const phone = rawPhone.replace(/[^0-9]/g, '').slice(-10);
+  if (!phone || phone.length !== 10) {
+    alert("कृपया 10 अंकों का सही व्हाट्सएप नंबर दर्ज करें।");
     return;
   }
 
@@ -126,7 +132,7 @@ async function handleFormSubmit(event) {
 
   const payBtn = document.getElementById("payBtn");
   if (payBtn) {
-    payBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> सुरक्षित ऑटो-पे तैयार हो रहा है...';
+    payBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> सुरक्षित पेमेंट लोड हो रहा है...';
     payBtn.disabled = true;
   }
 
@@ -150,9 +156,18 @@ async function handleFormSubmit(event) {
     if (data.success && data.subscription_id) {
       console.log("✅ AutoPay Subscription Ready:", data.subscription_id);
 
+      const problemMap = {
+        'career_business': 'करियर, नौकरी व व्यापार में रुकावट',
+        'marriage_love': 'विवाह में विलंब व प्रेम संबंध',
+        'finance_debt': 'आर्थिक स्थिति व कर्ज की समस्या',
+        'health_family': 'स्वास्थ्य व पारिवारिक अशांति',
+        'general_guidance': 'हस्तरेखा व कुंडली का संपूर्ण मार्गदर्शन'
+      };
+      const selectedProblem = problemMap[problem] || 'हस्तरेखा व कुंडली मार्गदर्शन';
+
       // WhatsApp रीडायरेक्शन लिंक तैयार करें
       const getWhatsAppUrl = (paymentId) => {
-        const text = `जय श्री राम, मैंने ₹1 ट्रायल ले लिया है।\n\n📌 *विवरण:*\n• नाम: ${name}\n• फ़ोन: ${phone}\n• समस्या: ${problem}\n• पेमेंट ID: ${paymentId || ''}\n\nयह मेरी दोनों हथेलियों की साफ फोटो है:`;
+        const text = `जय श्री राम, मैंने ₹1 में अपना परामर्श बुक कर लिया है।\n\n📌 *मेरे विवरण:*\n• नाम: ${name}\n• फ़ोन: ${phone}\n• मुख्य विषय: ${selectedProblem}\n• पेमेंट ID: ${paymentId || ''}\n\nकृपया मेरी कुंडली व हस्तरेखा विश्लेषण तैयार करें। यह मेरी जन्म तिथि, जन्म समय व दोनों हथेलियों की साफ फोटो है:`;
         return `https://wa.me/${APP_CONFIG.WHATSAPP_SUPPORT_NUMBER}?text=${encodeURIComponent(text)}`;
       };
 

@@ -599,50 +599,6 @@
           </div>
         </div>
 
-        <!-- Service Preference -->
-        <div>
-          <label class="block text-amber-300 text-sm font-bold mb-1.5 flex items-center gap-1.5">
-            <i class="fa-solid fa-hand text-amber-400"></i>
-            <span>आप क्या विश्लेषण चाहते हैं?</span>
-            <span class="text-rose-400 font-extrabold">*</span>
-          </label>
-          <select id="custService" required class="w-full bg-[#0a0517] border-2 border-amber-500/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-400 text-sm font-hindi">
-            <option value="both">हस्तरेखा + जन्मकुंडली दोनों विश्लेषण (सर्वाधिक लोकप्रिय)</option>
-            <option value="palm_only">केवल हस्तरेखा विश्लेषण (हथेली की फोटो द्वारा)</option>
-            <option value="kundali_only">केवल जन्मकुंडली विश्लेषण</option>
-          </select>
-        </div>
-
-        <!-- Date & Time of Birth -->
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-amber-300 text-sm font-bold mb-1.5 flex items-center gap-1.5">
-              <i class="fa-solid fa-calendar-days text-amber-400"></i>
-              <span>जन्म तिथि</span>
-              <span class="text-rose-400 font-extrabold">*</span>
-            </label>
-            <input type="date" id="custDob" required class="w-full bg-[#0a0517] border-2 border-amber-500/50 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-amber-400 text-sm font-hindi">
-          </div>
-          <div>
-            <label class="block text-amber-300 text-sm font-bold mb-1.5 flex items-center gap-1.5">
-              <i class="fa-solid fa-clock text-amber-400"></i>
-              <span>जन्म समय</span>
-              <span class="text-xs font-normal text-amber-200/80">(अनुमानित)</span>
-            </label>
-            <input type="time" id="custTime" class="w-full bg-[#0a0517] border-2 border-amber-500/50 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-amber-400 text-sm font-hindi">
-          </div>
-        </div>
-
-        <!-- Place of Birth -->
-        <div>
-          <label class="block text-amber-300 text-sm font-bold mb-1.5 flex items-center gap-1.5">
-            <i class="fa-solid fa-location-dot text-amber-400"></i>
-            <span>जन्म स्थान (शहर / राज्य)</span>
-            <span class="text-rose-400 font-extrabold">*</span>
-          </label>
-          <input type="text" id="custPlace" required placeholder="उदा. लखनऊ, उत्तर प्रदेश" class="w-full bg-[#0a0517] border-2 border-amber-500/50 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-amber-400 text-sm font-hindi">
-        </div>
-
         <!-- Primary Life Concern -->
         <div>
           <label class="block text-amber-300 text-sm font-bold mb-1.5 flex items-center gap-1.5">
@@ -655,31 +611,35 @@
             <option value="marriage_love">विवाह में विलंब, वैवाहिक सामंजस्य व प्रेम संबंध</option>
             <option value="finance_debt">आर्थिक स्थिति, बचत न होना व कर्ज की समस्या</option>
             <option value="health_family">स्वास्थ्य, मानसिक तनाव व पारिवारिक अशांति</option>
-            <option value="general_guidance">हस्तरेखा व कुंडली का संपूर्ण सामान्य मार्गदर्शन</option>
+            <option value="general_guidance" selected>हस्तरेखा व कुंडली का संपूर्ण सामान्य मार्गदर्शन</option>
           </select>
         </div>
 
-        <!-- Palm Photo Notice -->
-        <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-200 flex items-start gap-2.5">
-          <i class="fa-solid fa-camera text-amber-400 mt-0.5 text-sm"></i>
-          <span class="leading-relaxed"><strong>हस्तरेखा फोटो सूचना:</strong> ₹1 के ट्रायल भुगतान के बाद आपको हमारे आधिकारिक व्हाट्सएप पर दोनों हाथों की साफ फोटो भेजने का विकल्प प्राप्त होगा।</span>
+        <!-- WhatsApp Delivery & Photo Notice -->
+        <div class="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-xs text-emerald-200 flex items-start gap-3">
+          <i class="fa-brands fa-whatsapp text-emerald-400 text-xl mt-0.5 shrink-0"></i>
+          <div class="leading-relaxed">
+            <strong class="text-white block text-sm font-semibold mb-0.5">जन्म विवरण व हथेली की फोटो:</strong>
+            मात्र ₹1 टोकन भुगतान के बाद आपकी <span class="text-amber-300 font-bold">जन्म तारीख, समय व हथेली की फोटो</span> हमारे ज्योतिषाचार्य जी के आधिकारिक व्हाट्सएप पर सीधे ली जाएगी।
+          </div>
         </div>
 
         <!-- Order Summary & Transparent Subscription Box -->
         <div class="bg-amber-950/40 border border-amber-500/30 rounded-xl p-3.5 space-y-2 mt-2">
           <div class="flex justify-between items-center text-xs sm:text-sm">
             <span class="text-slate-300 font-medium">आज देय ट्रायल टोकन शुल्क:</span>
-            <span class="text-lg font-bold text-emerald-400 font-display">₹1.00</span>
+            <span class="text-xl font-bold text-emerald-400 font-display">₹1.00</span>
           </div>
-          <div class="text-[11px] sm:text-xs text-slate-300 leading-relaxed border-t border-amber-500/15 pt-2">
-            💡 <strong>सदस्यता विवरण:</strong> आज ₹1 ट्रायल कटेगा। सेवा जारी रहने पर दूसरे दिन से ₹599 प्रति दो माह की सदस्यता सक्रिय होगी। इसे कभी भी 1-क्लिक या व्हाट्सएप संदेश द्वारा तुरंत रद्द किया जा सकता है।
+          <div class="text-[11px] sm:text-xs text-slate-300 leading-relaxed border-t border-amber-500/15 pt-2 flex items-center gap-2">
+            <i class="fa-solid fa-shield-check text-emerald-400 text-sm shrink-0"></i>
+            <span><strong>100% सुरक्षित • कभी भी 1-क्लिक में रद्द करें:</strong> आज मात्र ₹1 ट्रायल कटेगा। कोई जोखिम नहीं।</span>
           </div>
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" id="payBtn" class="w-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 hover:from-amber-400 hover:to-yellow-500 text-gray-950 font-bold py-3.5 px-4 rounded-xl text-sm sm:text-base shadow-[0_0_20px_rgba(245,158,11,0.5)] flex items-center justify-center gap-2 mt-4 transition">
-          <i class="fa-solid fa-shield-check"></i>
-          <span>सुरक्षित भुगतान करें — ₹1</span>
+        <button type="submit" id="payBtn" class="w-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 hover:from-amber-400 hover:to-yellow-500 text-gray-950 font-black py-4 px-4 rounded-xl text-sm sm:text-base shadow-[0_0_20px_rgba(245,158,11,0.5)] flex items-center justify-center gap-2 mt-4 transition hover:scale-[1.02]">
+          <i class="fa-solid fa-bolt text-gray-950"></i>
+          <span>सुरक्षित भुगतान करें — मात्र ₹1 →</span>
         </button>
 
       </form>
@@ -688,6 +648,6 @@
   </div>
 
   <!-- JavaScript Application File with Cache-Buster -->
-  <script src="app.js?v=9.0"></script>
+  <script src="app.js?v=10.0"></script>
 </body>
 </html>
